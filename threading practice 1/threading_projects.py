@@ -54,6 +54,7 @@ if __name__ == "__main__":
         print("Please type in a pharagraph that you want to be inspected below:\n")
         pharagraph = open("threading practice 1/lorem_ipsum.txt", "w")
         content = input()
+        time.sleep(3)
         pharagraph.write(content)
         pharagraph.close()
         content = content.replace(".", "")
