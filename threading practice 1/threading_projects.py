@@ -1,60 +1,60 @@
-from threading import Thread, Lock
+from multiprocessing import Process
 import time
 
 """A very, very, very long document"""
-current = "lorem ipsum"
-lorem = open("threading practice 1/lorem.txt", "r")
+pharagraph = open("threading practice 1/lorem_ipsum.txt", "r")
 
-content = lorem.read()
+content = pharagraph.read()
 content = content.replace(".", "")
+content = content.replace("?", "")
+content = content.replace("!", "")
+content = content.replace(",", "")
 content = content.split()
+pharagraph.close()
+def total_list_items(list):
+    amount = len(list)
+    print(f"\nThe total amount of items in the pharagraph is: {amount}\n")
+    time.sleep(0.1)
 
-def total_list_items(list, lock):
-    with lock:
-        amount = len(list)
-        print(f"The total amount of items in the pharagraph is: {amount}\n")
-        time.sleep(0.1)
+def all_list_items(list):
+    list.sort()
+    print(f"The sorted version of these words is: {list}\n")
+    time.sleep(0.1)
 
-def all_list_items(list, lock):
-    with lock:
-        ordered = list.sort()
-        print(f"The sorted version of these words is: {ordered}\n")
-        time.sleep(0.1)
-
-def largest_words(list, lock):
-    with lock:
-        large_words = []
-        for item in list:
-            if (len(list) == 0) or (len(item) == len(list[-1])):
-                list.append(item)
-            elif len(item) > len(list[-1]):
-                large_words[-1] = item
-        print(f"The largest words are: {large_words}\n")
-        time.sleep(0.1)
+def largest_words(list):
+    large_words = []
+    for item in list:
+        if len(item) >= 11:
+            large_words.append(item)
+    if len(large_words) > 0:
+        print(f"The large word(s) in this pharagraph are: {large_words}\n")
+    else:
+        print("Their where no long words in this pharagraph :(")
+    time.sleep(0.1)
 
 if __name__ == "__main__":
-    lock = Lock()
-    print("This program uses threading to calculate different things of different pharagraphs.\n")
+    print("This program uses multiple processes to calculate different things of different pharagraphs.\n")
     while True:
-        user_input = input(f"This will play information about {current}. Type q to quit, otherwise, don't do anything.: ")
+        user_input = input(f"This will play information about your pharagraph. Type q to quit, otherwise, don't do anything.: ")
         if user_input.lower() == "q":
             break
 
-        thread1 = Thread(target=total_list_items, args=(lock, content))
-        thread2 = Thread(target=all_list_items, args=(lock, content))
-        thread3 = Thread(target=largest_words, args=(lock, content))
+        process1 = Process(target=total_list_items, args=(content,))
+        process2 = Process(target=all_list_items, args=(content,))
+        process3 = Process(target=largest_words, args=(content,))
 
-        thread1.start()
-        thread2.start()
-        thread3.start()
+        process1.start()
+        process2.start()
+        process3.start()
 
-        thread1.join()
-        thread2.join()
-        thread3.join()
+        process1.join()
+        process2.join()
+        process3.join()
 
         print("Please type in a pharagraph that you want to be inspected below:\n")
-        lorem.close()
+        pharagraph = open("threading practice 1/lorem_ipsum.txt", "w")
         content = input()
+        pharagraph.write(content)
+        pharagraph.close()
         content = content.replace(".", "")
         content = content.split()
-        current = input("What is the name of this pharagraph?:")
